@@ -1,58 +1,98 @@
 import sys
+P1 = "X"
+P2 = "O"
 
 
 def new_board():
-    board = list()
+    new_board = list()
     for i in range(3):
-        board.append(list())
-        for j in range(3):
-            board[i].append(None)
-    return board
+        new_board.append(list())
+        for _ in range(3):
+            new_board[i].append(None)
+    return new_board
 
-def render(board):
+def render(curr_board):
+    brd = [x[:] for x in curr_board]
     print("    A  B  C")
     print("  -----------")
     for i in range(3):
         for j in range(3):
-            if board[i][j] == None:
-                board[i][j] = " "
-        print(str(i) + " | ", end='')
-        print(str(board[i][0]) + '  ' + 
-              str(board[i][1]) + '  ' + 
-              str(board[i][2]), end='')
-        print(" |")
+            if brd[i][j] == None:
+                brd[i][j] = " "
+        print("{} | {}  {}  {} |".format(str(i), brd[i][0], brd[i][1], brd[i][2]))
     print("  -----------")
 
 def get_move():
-    x = "-1"
-    y = "-1"
-    while not x == 'A' and not x == 'a' and not x == 'B' and not x == 'b' and not x == 'C' and not x == 'c':
+    x = -1
+    y = -1
+    while x != 'A' and x != 'a' and x != 'b' and x != 'B' and x != 'C' and x != 'c':
         x = input("X: ")
-    while not int(y) >= 0 or not int(y) < 3:
-        y = input("Y: ")
+    while y < 0 or y > 2:
+        y = int(input("Y: "))
+    if x == 'A' or x == 'a':
+        x = 0
+    elif x == 'B' or x == 'b':
+        x = 1
+    else:
+        x = 2
     return (x,y)
 
-def make_move(board, player):
-    coords = get_move()
+def is_valid_move(curr_board, coords):
     x = coords[0]
     y = coords[1]
-    corY = int(y)
-    if x == 'A' or x == 'a':
-        corX = 0
-    elif x == 'B' or x == 'b':
-        corX = 1
+    if curr_board[y][x] == None:
+        return True
     else:
-        corX = 2
-    if player == 1:
-        board[corY][corX] = "X"
-    else:
-        board[corY][corX] = "O"
-    return board
+        print("Invalid move!")
+        return False
+
+def make_move(curr_board, coords, player):
+    brd = [x[:] for x in curr_board]
+    x = coords[0]
+    y = coords[1]
+    brd[y][x] = player
+    return brd
+
+def get_state(curr_board):
+    brd = [x[:] for x in curr_board]
+    # Append diagonals
+    brd.append([brd[0][0], brd[1][1], brd[2][2]])
+    brd.append([brd[0][2], brd[1][1], brd[2][0]])
+    # Append columns
+    brd.append([brd[0][0], brd[1][0], brd[2][0]])
+    brd.append([brd[0][1], brd[1][1], brd[2][1]])
+    brd.append([brd[0][2], brd[1][2], brd[2][2]])
+    
+    check = 0
+    for x in brd:
+        if x[0] != None and x[0] == x[1] and x[1] == x[2]:
+            print("Winner!")
+            print(f"   {x[0]}")
+            return True
+        for y in x:
+            if y == None:
+                check = check + 1
+
+    if check == 0:
+        print("Draw!")
+        return True
+    return False
+
 
 board = new_board()
 render(board)
 while True:
-    board = make_move(board, 1)
+    coords = get_move()
+    while not is_valid_move(board, coords):
+        coords = get_move()
+    board = make_move(board, coords, P1)
     render(board)
-    board = make_move(board, 2)
+    if get_state(board):
+        sys.exit(0)
+    coords = get_move()
+    while not is_valid_move(board, coords):
+        coords = get_move()
+    board = make_move(board, coords, P2)
     render(board)
+    if get_state(board):
+        sys.exit(0)
