@@ -28,7 +28,10 @@ def get_move():
     while x != 'A' and x != 'a' and x != 'b' and x != 'B' and x != 'C' and x != 'c':
         x = input("X: ")
     while y < 0 or y > 2:
-        y = int(input("Y: "))
+        try:
+            y = int(input("Y: "))
+        except:
+            y = -1
     if x == 'A' or x == 'a':
         x = 0
     elif x == 'B' or x == 'b':
