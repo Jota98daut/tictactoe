@@ -1,7 +1,9 @@
 import sys
+from random import randrange
+
+
 P1 = "X"
 P2 = "O"
-
 
 def new_board():
     new_board = list()
@@ -81,6 +83,18 @@ def get_state(curr_board):
         return True
     return False
 
+def ai_move(curr_board):
+    new_board = [x[:] for x in curr_board]
+    x = randrange(0, 3)
+    y = randrange(0, 3)
+    while new_board[y][x] != None:
+        x = randrange(0, 3)
+        y = randrange(0, 3)
+    new_board[y][x] = P2
+    return new_board
+
+
+
 
 board = new_board()
 render(board)
@@ -92,10 +106,7 @@ while True:
     render(board)
     if get_state(board):
         sys.exit(0)
-    coords = get_move()
-    while not is_valid_move(board, coords):
-        coords = get_move()
-    board = make_move(board, coords, P2)
+    board = ai_move(board)
     render(board)
     if get_state(board):
         sys.exit(0)
