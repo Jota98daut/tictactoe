@@ -83,14 +83,14 @@ def get_state(curr_board):
         return True
     return False
 
-def ai_move(curr_board):
+def ai_move(curr_board, player):
     new_board = [x[:] for x in curr_board]
     x = randrange(0, 3)
     y = randrange(0, 3)
     while new_board[y][x] != None:
         x = randrange(0, 3)
         y = randrange(0, 3)
-    new_board[y][x] = P2
+    new_board[y][x] = player
     return new_board
 
 
@@ -106,7 +106,7 @@ while True:
     render(board)
     if get_state(board):
         sys.exit(0)
-    board = ai_move(board)
+    board = ai_move(board, P2)
     render(board)
     if get_state(board):
         sys.exit(0)
